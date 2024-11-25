@@ -1,6 +1,6 @@
 <?php
 // Include the User class and database configuration
-include 'User.php';
+include './classes/user.php';
 $config = include 'db.config.php';
 
 // Initialize the database connection

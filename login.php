@@ -1,6 +1,6 @@
 <?php
 // Include the User class and database configuration
-include 'User.php';
+include './classes/user.php';
 $config = include 'db.config.php';
 
 // Initialize the database connection
@@ -13,20 +13,23 @@ try {
 }
 
 // Initialize variables for feedback
-$success = $error = "";
+$error = "";
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
-    $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Use the User class to register the user
+    // Use the User class to authenticate the user
     $user = new User($pdo);
-    if ($user->registerUser($username, $email, $password)) {
-        $success = "Registration successful! You can now log in.";
+    if ($user->authenticateUser($username, $password)) {
+        // Successful authentication
+        session_start();
+        $_SESSION['username'] = $username; // Store user session
+        header('Location: dashboard.php'); // Redirect to dashboard
+        exit();
     } else {
-        $error = "Registration failed. Please ensure all fields are valid and the username/email is not already taken.";
+        $error = "Invalid username or password. Please try again.";
     }
 }
 ?>
@@ -35,15 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Register</h1>
-        <?php if ($success): ?>
-            <p class="success"><?= htmlspecialchars($success) ?></p>
-        <?php endif; ?>
+        <h1>Login</h1>
         <?php if ($error): ?>
             <p class="error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
@@ -51,13 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" minlength="9" required>
+            <input type="password" id="password" name="password" required>
 
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
         </form>
     </div>
 </body>
