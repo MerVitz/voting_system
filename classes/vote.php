@@ -1,4 +1,4 @@
-<?
+<?php
 class Vote {
     private $pdo;
 

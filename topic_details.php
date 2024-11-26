@@ -1,8 +1,8 @@
 <?php
 // Include required classes and ensure user authentication
-include 'Topic.php';
-include 'Vote.php';
-include 'Comment.php';
+include './classes/topic.php';
+include './classes/vote.php';
+include './classes/comment.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {

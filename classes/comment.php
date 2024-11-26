@@ -1,7 +1,6 @@
 <?php
 
 class Comment {
-    
     private $pdo;
 
     public function __construct($pdo) {
@@ -16,7 +15,7 @@ class Comment {
 
         // Insert comment into the database
         $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, topic_id, comment, commented_at) 
-                                     VALUES (:user_id, :topic_id, :comment, NOW())");
+                                     VALUES (:user_id, :topic_id, :comment, DATETIME('now'))");
         return $stmt->execute([
             ':user_id' => $user_id,
             ':topic_id' => $topic_id,
@@ -24,9 +23,9 @@ class Comment {
         ]);
     }
 
-    public function getComments($title): array {
+    public function getComments($topic_id): array {
         // Validate input
-        if (empty($title)) {
+        if (empty($topic_id)) {
             return [];
         }
 
@@ -35,37 +34,8 @@ class Comment {
                                      FROM comments 
                                      WHERE topic_id = :topic_id 
                                      ORDER BY commented_at DESC");
-        $stmt->execute([':topic_id' => $title]);
+        $stmt->execute([':topic_id' => $topic_id]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-
-?>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to the Voting App</h1>
-        <a href="create_topic.php" class="btn">Add New Topic</a>
-        <h2>Topics</h2>
-        <ul>
-            <?php foreach ($topics as $topic): ?>
-                <li>
-                    <a href="topic_details.php?id=<?= $topic['id'] ?>">
-                        <?= htmlspecialchars($topic['title']) ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-</body>
-</html>

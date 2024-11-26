@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Successful authentication
         session_start();
         $_SESSION['username'] = $username; // Store user session
+        echo "Login successful! Redirecting...";
         header('Location: dashboard.php'); // Redirect to dashboard
         exit();
     } else {
